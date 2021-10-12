@@ -1,3 +1,5 @@
+ # -*- coding: utf-8 -*-
+
 from aip import AipFace
 from picamera import PiCamera
 import RPi.GPIO as GPIO
@@ -9,9 +11,14 @@ import json
 import subprocess
 
 config_file = {}
-with open("./config.json", "r") as f:
-    config_file=json.load(f)
+name_file = {}
+with open("./config.json", "r") as f1:
+    config_file=json.load(f1)
     print("加载配置文件完成")
+
+with open("./name.json", "r",encoding='utf-8') as f2:
+    name_file=json.load(f2)
+    print("加载人脸库完成")
 
 # 百度人脸识别API账号信息
 APP_ID = config_file['APP_ID']
@@ -29,6 +36,10 @@ GROUP = config_file['GROUP']
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(26, GPIO.OUT)
 GPIO.output(26, False)
+
+
+def getName(key):
+    return name_file.get(key, key)
 
 
 # 照相函数
@@ -70,7 +81,7 @@ def go_api(image):
             score = result['result']['user_list'][0]['score']  # 获取相似度
             if score > 80:  # 如果相似度大于80
                 GPIO.output(26, True)
-                print(name+"，欢迎！ 门已开")
+                print(getName(str(name))+"，欢迎！")
                 # os.system('mplayer /home/pi/Desktop/open.mp3')
                 ret = subprocess.run('mplayer /home/pi/Desktop/open.mp3', shell=True,
                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8")
