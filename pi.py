@@ -105,11 +105,18 @@ if __name__ == '__main__':
     GPIO.output(26, False)
     camera.resolution = (1024, 768)  # 摄像界面为1024*768
     camera.start_preview()  # 开始摄像
+    count = 0
     while True:
+        count+=1
         getimage()  # 拍照
         img = transimage()  # 转换照片格式
         res = go_api(img)  # 将转换了格式的图片上传到百度云
         if res == 1:
             GPIO.output(26, False)
-        pyautogui.click()
-        time.sleep(0.5)
+        print('')
+
+        if count==10:
+            count = 0
+            pyautogui.click()
+            print('系统运行中......')
+        time.sleep(0.3)
